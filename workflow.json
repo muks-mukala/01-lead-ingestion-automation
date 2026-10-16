@@ -1,0 +1,239 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "a384e239-0da7-461d-8965-7e6cb3434765",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0f4b763e-b4d6-45b7-b85d-49b87b889330",
+      "name": "Webhook",
+      "webhookId": "a384e239-0da7-461d-8965-7e6cb3434765"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "dc24a7bb-b99a-4899-8a66-b8f38ccba88a",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "fa7cdd84-4fd9-48a0-8078-bac9d62c4eca",
+              "leftValue": "={{ $json.message }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        0
+      ],
+      "id": "01ba104f-546f-43ff-bb6f-73e2ab1c12e5",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1PUk58ie13DnFfCa5B3EqU8hMNmCv_IYroHxxNOxfHkA/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Received At.": "={{ $now }}",
+            "Name": "={{ $json.name }}",
+            "Phone": "={{ $json.phone }}",
+            "Message": "={{ $json.message }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Received At.",
+              "displayName": "Received At.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        432,
+        -96
+      ],
+      "id": "04458055-bccb-42b1-9fa4-749f59acf720",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "MfhtF2BA7JTJ5Dr4",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "mdmukala15@gmail.com",
+        "subject": "=New Website Lead: {{ $json.Name }}",
+        "emailType": "text",
+        "message": "=You have received a new contact form inquiry!\n\nName: {{ $json.Name }}\nPhone: {{ $json.Phone }}\nMessage: {{ $json.Message }}\nReceived At: {{ $now }}\n\n---\nThis lead has been automatically logged to your Google Sheet.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        656,
+        -96
+      ],
+      "id": "f2846ad8-0d56-4cb6-8f41-70d26584fa1e",
+      "name": "Send a message",
+      "webhookId": "2bcb6793-0478-4ca3-abd7-211c321eec19",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "z9DSY8M5NaXWqtDg",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "name": "John Doe",
+          "phone": "+260970000000",
+          "message": "Hello, I am interested in your services."
+        }
+      },
+      {
+        "json": {
+          "name": "John Boe",
+          "phone": "+2609712456644",
+          "message": "Hello, I am interested in your services."
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "8631bdf6-9143-45a6-a0d9-37fb97428b62",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2a934fbbc58eae7606fc741e81d9f7f1929c9bbe5c1ce5c81b715326ad778237"
+  },
+  "nodeGroups": [],
+  "id": "i3OkyX0huXaFhI4B",
+  "tags": []
+}
