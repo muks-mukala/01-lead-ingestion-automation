@@ -1,4 +1,4 @@
-# Portfolio Project 01: Automated Lead Ingestion & Notification Pipeline
+Automated Lead Ingestion & Notification Pipeline
 
 ## Overview
 An automated backend workflow built in n8n designed to capture inbound leads from website contact forms, perform data validation, log structured entries into Google Sheets in real-time, and dispatch instant email alerts via Gmail.
